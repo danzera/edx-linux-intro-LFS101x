@@ -18,7 +18,11 @@ There are hundreds of Linux distributions. Android is one. Software packaging, i
 3. **SUSE** - SUSE and openSUSE
 
 #### Which distribution to choose?
-Determining the appropriate distro to deploy requires that you match your specific system needs to the capabilities of the different distros.
+Determining the appropriate distro to deploy requires that you match your specific system needs to the capabilities of the different distros. Some considerations:  
+
+* **Server** - RHEL/CentOS, Ubuntu Server, SLES, Debian
+* **Desktop** - Ubuntu, Fedora, LinuxMint, Debian
+* **Embedded** - Yocto, Android, OpenEmbedded...Many embedded Linux systems use custom crafted contents, rather than Yocto/Android.
 
 ## Other Terminology
 #### Boot Loader
