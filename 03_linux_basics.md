@@ -3,3 +3,48 @@ Determining the appropriate distro to deploy requires that you match your specif
 
 ## Boot Process
 The boot process has multiple steps, starting with BIOS, which triggers the boot loader to start up the Linux Kernel. From there, the initramfs filesystem is invoked, which triggers the init program to complete the startup process.
+
+#### Basic Input/Output Stream (BIOS)
+Also called Power On Self Test (POST), BIOS initializes the hardware, including the screen and keyboard, and tests main memory. The BIOS software is stored on a ROM chip on the motherboard. After this, the remainder of the boot process is controlled by the operating system (OS).
+
+#### Master Boot Record (MBR)
+Usually stored on one of the hard disks in the system, either in the boot sector (traditional BIOS/MBR systems) or the EFI partition (more recent [Unified] Extensible Firmare Interface (EFI/UEFI) systems). Up to this stage, the machine *does not* access any mass storage media. Thereafter, info on date, time and the most important peripherals are loaded from the CMOS values (after a technology used for the battery-powered memory store that allows the system to keep track of date/time even when powered off).
+
+#### Boot Loader
+A number of boot loaders exist for Linux; the most common ones are GRUB (GRand Unified Boot loader), ISOLINUX (for booting from removable media) and DAS U-BOOT (for booting on embedded devices/appliances). Most Linux boot loaders can present a UI for choosing alternate options for booting Linux and even other operating systems. When booting Linux, the boot loader is responsible for loading the kernel image and the initial RAM disk or filesystem (which contains some critical files and device drivers needed to start the sytem) into memory. The boot loader has two distinct stages:
+
+1. **Boot Loader** - Examines the *partition table* and finds a bootable partition. Then it searches for the *second stage boot loader* (ex. GRUB) and loads it into Random Access Memory (RAM). For systems using EFI/UEFI, this procedure is more complicated, but more versatile than older MBR methods.
+
+2. **Second Stage Boot Loader** - Resides under `/boot`. A splash screen is displayed which allows us to choose which OS to boot. The boot loader then loads the kernel of the selected OS into RAM and passes control to it. Kernels are typically compressed, so its first job is to uncompress itself. Then it checks and analyzes system hardware and initializes any hardware device drivers built into the kernel.
+
+#### Initial RAM Disk
+`initramfs` filesystem image contains program and binary files that perform all action needed to mount the proper root filesystem.
+
+1. The *mount* program instructs the OS that a filesystem is ready for use, and associates it with a particular point in the overall hierarchy of the filesystem (the mount point). If this is successful, the `initramfs` is cleared from RAM and the init program on the root fileststem, `/sbin/init`, is executed.
+
+2. `init` handles the mounting and pivoting over the final real root filesystem. If special hardware drivers are needed before the mass storage can be accessed, they must be in the `initramfs` image.
+
+**`sbin/init`** The kernel runs this once it has setup all its hardware and mounted the root filesystem. This then becomes the initial process, which then starts other processes to get the system running. `init` is also responsible for keeping the system running and shutting it down cleanly. Traditionally this process startup was done using *runlevels*. However, recent distros have moved away from this (with backwards compatibility) towards newer methods, `systemd` and `Upstart`.
+
+**`SystemVinit`** The old *runlevel* startup process; viewed things as serial processes, divided into sequential stages. Each stage required completion before the next could proceed.
+
+**`Upstart`** Developed by Ubuntu in 2006, adopted by Fedora 9 in 2008, and REHL 6 and its clones. Replaced by `systemd` almost universally since.
+
+**`systemd`** Adopted by Fedora in 2011, later adopted by RHEL 7 and SUSE. Replaced `Upstart` in Ubuntu 16.04. It now has *almost* universal adoption, which has made learning how to work on Linux systems simpler.
+
+* Systems with `systemd` start up faster than those with earlier `init` methods. Serialized sets of steps are replaced with aggressive parallelization techniques so multiple services can be initiated simultaneously.
+
+* Complicated startup shell scripts are replaced with simpler configuration files.
+
+* `sbin/init` now just *points to* `lib/systemd/systemd`
+
+**`systemctl`** One `systemd` command used for most basic tasks.
+
+* Start/stop/restart a service (nfs an example here) on a currently running system:
+`sudo systemctl start|stop|restart nfs.service`
+
+* Enable/disable a system service from staring up at system boot (in most cases '.service' can be omitted):
+`sudo systemctl enable/disable nfs`
+
+#### Text-Mode Login
+Near the end of the boot process `init` starts a number of text-mode login prompts. These enable you to type your username and password to eventually get a command shell. If you are running a system with a graphical login interface, you will not see these first.
