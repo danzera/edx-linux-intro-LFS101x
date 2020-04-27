@@ -17,6 +17,9 @@ There are hundreds of Linux distributions. Android is one. Software packaging, i
 2. **Fedora** - Fedora, Red Hat Enterprise Linux (RHEL), and CentOS
 3. **SUSE** - SUSE and openSUSE
 
+#### Which distribution to choose?
+Determining the appropriate distro to deploy requires that you match your specific system needs to the capabilities of the different distros.
+
 ## Other Terminology
 #### Boot Loader
 A program that boots the operating system, e.g. GRUB, ISOLINUX.
